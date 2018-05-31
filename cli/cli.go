@@ -4,17 +4,17 @@ import "github.com/urfave/cli"
 
 // FlagsStruct - holds command line args
 type FlagsStruct struct {
-	MyFlag string
+	ConfigFlag string
 }
 
 // StartCLI - gathers command line args
 func StartCLI(cliFlags *FlagsStruct, args []string) error {
 	app := cli.NewApp()
 	app.Action = func(ctx *cli.Context) error {
-		MyFlag := ctx.GlobalString("my-flag")
+		ConfigFlag := ctx.GlobalString("config")
 
 		// build the cli struct to send back to main
-		cliFlags.MyFlag = MyFlag
+		cliFlags.ConfigFlag = ConfigFlag
 		return nil
 	}
 	app.Authors = []cli.Author{
@@ -25,9 +25,9 @@ func StartCLI(cliFlags *FlagsStruct, args []string) error {
 	}
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:  "my-flag, f",
-			Usage: "My flag usage goes here",
-			Value: "myDefault",
+			Name:  "config, c",
+			Usage: "Config flag usage goes here",
+			Value: "../test/config.toml",
 		},
 	}
 	app.Name = "myAppName"

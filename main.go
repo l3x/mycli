@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/l3x/mycli/myDir/cli"
+	"github.com/l3x/mycli/cli"
 )
 
 func main() {
