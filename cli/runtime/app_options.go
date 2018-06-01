@@ -3,6 +3,8 @@ package runtime
 import (
 	//. "utils"
 	"reflect"
+
+	"github.com/urfave/cli"
 )
 
 type AppOption func(*options) error
@@ -27,5 +29,14 @@ func Argument(kv KeyVal) AppOption {
 			o.arguments[key] = kv[key]
 		}
 		return nil
+	}
+}
+
+type testFunc func(c *cli.Context) bool
+
+func TestFunc(fn testFunc) AppOption {
+	return func(o *options) (err error) {
+		o.testFn = fn
+		return
 	}
 }

@@ -2,21 +2,23 @@ package cli
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"testing"
 
+	"github.com/l3x/mycli/cli/runtime"
 	"github.com/urfave/cli"
 )
 
 const (
 	defaultVerboseLogging = false
-	testFileMode          = os.FileMode(0640)
 )
 
 var (
-	cliBinaryName  string
+	Version        = "1.0.0"
+	Revision       = "591fbe1"
+	cliBinaryName  = "keep-core"
+	osArgs         = []string{cliBinaryName, "test-commands"}
 	verboseLogging bool
 )
 
@@ -67,41 +69,38 @@ func teardown() {
 
 func TestConfigFlag(t *testing.T) {
 
-	var Version = "1.0.0"
-	var Revision = "591fbe1"
-
-	arguments := []string{
-		"/private/var/folders/8g/tm3k26dx3x30w7x0lhq_2qg00000gn/T/___go_build_main_go_darwin",
-		"--config",
-		"/tmp/UTC--2018-03-11T01-37-33.202765887Z--c2a56884538778bacd91aa5bf343bf882c5fb18b",
-		"test-commands",
-	}
-	cliErr := RunCLI(arguments, Version, Revision)
-	if cliErr != nil {
-		log.Println("CLI error encountered:")
-		log.Fatal(cliErr)
+	type testData struct {
+		args map[string]string
+		want string
 	}
 
-	set := flag.NewFlagSet("testFlags", flag.ContinueOnError)
-	err := set.Parse(arguments[1:])
-	if err != nil {
-		t.Errorf("error parsing arguments: %v", err)
+	data := []testData{
+		{map[string]string{
+			"--config": "/tmp/xxx",
+			"--extra":  "XXX",
+		}, "XXX"},
 	}
-	app := cli.NewApp()
-	ctx := cli.NewContext(app, set, nil)
 
-	fmt.Printf("ctx.App.Flags: %v\n", ctx.App.Flags)
+	for _, test := range data {
+		newArgs := runtime.Argument(test.args)
 
-	//os.Setenv("KEEP_ETHEREUM_PASSWORD", test.config.Ethereum.Account.KeyFilePassword)
+		runtime.TestFunc(func(c *cli.Context) bool { return c.GlobalString("extra") == "XXX" })
 
-	//err := validateConfig(test.config)
-	//var got string
-	//if err != nil {
-	//	got = strings.TrimSpace(err.Error())
-	//}
+		cliErr := RunCLI(osArgs, Version, Revision, newArgs)
+		if cliErr != nil {
+			log.Println("CLI error encountered:")
+			log.Fatal(cliErr)
+		}
 
-	//if test.want != got {
-	//	t.Errorf("%s %s => \nWANT\n%s\nGOT\n%v", test.want, got)
-	//}
+		set := flag.NewFlagSet("testExtraForXXX", flag.ContinueOnError)
+		app := cli.NewApp()
+		ctx := cli.NewContext(app, set, nil)
+
+		got := ctx.GlobalString("extra")
+
+		if test.want != got {
+			t.Errorf("%s %s => \nWANT\n%s\nGOT\n%v", test.want, got)
+		}
+	}
 
 }
