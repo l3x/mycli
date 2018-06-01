@@ -1,37 +1,85 @@
 package cli
 
-import "github.com/urfave/cli"
+import (
+	"fmt"
+	"os"
+	"path"
+	"time"
 
-// FlagsStruct - holds command line args
-type FlagsStruct struct {
-	ConfigFlag string
-}
+	"github.com/l3x/mycli/cli/runtime"
+	"github.com/urfave/cli"
+)
 
-// StartCLI - gathers command line args
-func StartCLI(cliFlags *FlagsStruct, args []string) error {
-	app := cli.NewApp()
-	app.Action = func(ctx *cli.Context) error {
-		ConfigFlag := ctx.GlobalString("config")
+var (
+	app        *cli.App
+	configPath string
+	extraArg   string
+)
 
-		// build the cli struct to send back to main
-		cliFlags.ConfigFlag = ConfigFlag
-		return nil
-	}
+func init() {
+	app = cli.NewApp()
+	app.Name = path.Base(os.Args[0])
+	app.Usage = "CLI for The Keep Network"
+	app.Description = "Command line interface (CLI) for running a Keep provider"
+	app.Copyright = "" //TODO: Insert copyright info later
+	app.Compiled = time.Now()
 	app.Authors = []cli.Author{
 		{
-			Email: "my@email.com",
-			Name:  "Adam Hanna",
+			Name:  "Keep Network",
+			Email: "info@keep.network",
 		},
 	}
+	app.Commands = commands
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:  "config, c",
-			Usage: "Config flag usage goes here",
-			Value: "../test/config.toml",
+			Name:        "config,c",
+			Value:       DefaultConfigPath,
+			Destination: &configPath,
+			EnvVar:      "CONFIG_PATH",
+			Usage:       "optionally, specify the `CONFIG_PATH` environment variable",
+		},
+		cli.StringFlag{
+			Name:        "extra,e",
+			Value:       "",
+			Destination: &extraArg,
+			EnvVar:      "EXTRA_ARG",
+			Usage:       "used for testing purposes",
+			Hidden:      true,
 		},
 	}
-	app.Name = "myAppName"
-	app.Usage = "My App's Usage"
-	app.Version = "0.0.1"
-	return app.Run(args)
+}
+
+// RunCLI gathers command line arguments and runs the CLI application
+func RunCLI(osArgs []string, version, revision string, opts ...runtime.AppOption) error {
+
+	app.Version = fmt.Sprintf("%s (revision %s)", version, revision)
+
+	//kv := map[string]string{
+	//	"config":  "/tmp/xxx",
+	//	"command": "smoke-test -g 6 -t 2",
+	//}
+
+	//rt, err := runtime.New(
+	//	runtime.Version("1.1.2"),
+	//	runtime.Revision("591fbe1"),
+	//	runtime.Argument(kv),
+	//)
+
+	//kv := map[string]string{
+	//	"--config": "/tmp/xxx",
+	//}
+	//
+	//newArgs := runtime.Argument(kv)
+
+	opts = append(opts, runtime.OsArguments(osArgs))
+	//opts = append(opts, newArgs)
+
+	rt, err := runtime.New(opts...)
+	if err != nil {
+		fmt.Printf("unable to initialize CLI: %v", err)
+		os.Exit(1)
+	}
+
+	//return runtime.Run(args)
+	return rt.Run(app)
 }

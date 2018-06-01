@@ -5,16 +5,28 @@ import (
 	"os"
 
 	"github.com/l3x/mycli/cli"
+	"github.com/l3x/mycli/cli/runtime"
+)
+
+var (
+	// Version is the semantic version (added at compile time)  See scripts/version.sh
+	Version string
+	// Revision is the git commit id (added at compile time)
+	Revision string
 )
 
 func main() {
-	// Grab the user inputed CLI flags
-	cliFlags := cli.FlagsStruct{}
-	cliErr := cli.StartCLI(&cliFlags, os.Args)
+
+	kv := map[string]string{
+		"--config": "/tmp/xxx",
+		"--extra":  "XXX",
+	}
+	newArgs := runtime.Argument(kv)
+
+	cliErr := cli.RunCLI(os.Args, Version, Revision, newArgs)
 	if cliErr != nil {
-		log.Println("Error grabbing command line args")
+		log.Println("CLI error encountered:")
 		log.Fatal(cliErr)
 	}
 
-	// Do stuff ...
 }
