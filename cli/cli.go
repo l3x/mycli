@@ -54,25 +54,7 @@ func RunCLI(osArgs []string, version, revision string, opts ...runtime.AppOption
 
 	app.Version = fmt.Sprintf("%s (revision %s)", version, revision)
 
-	//kv := map[string]string{
-	//	"config":  "/tmp/xxx",
-	//	"command": "smoke-test -g 6 -t 2",
-	//}
-
-	//rt, err := runtime.New(
-	//	runtime.Version("1.1.2"),
-	//	runtime.Revision("591fbe1"),
-	//	runtime.Argument(kv),
-	//)
-
-	//kv := map[string]string{
-	//	"--config": "/tmp/xxx",
-	//}
-	//
-	//newArgs := runtime.Argument(kv)
-
 	opts = append(opts, runtime.OsArguments(osArgs))
-	//opts = append(opts, newArgs)
 
 	rt, err := runtime.New(opts...)
 	if err != nil {

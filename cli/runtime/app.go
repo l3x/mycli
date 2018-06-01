@@ -9,16 +9,12 @@ import (
 )
 
 const (
-	defaultVersion       = "1.0.0"
-	defaultRevision      = "deadbeef"
 	maxNumberOfArguments = 9
 )
 
 var defaultKeyVal = make(map[string]string, maxNumberOfArguments)
 
 var defaultAppOptions = options{
-	version:   defaultVersion,
-	revision:  defaultRevision,
 	osArgs:    []string{},
 	arguments: defaultKeyVal,
 }

@@ -9,20 +9,7 @@ type AppOption func(*options) error
 type KeyVal map[string]string
 type OsArgs []string
 
-func Version(s string) AppOption {
-	return func(o *options) error {
-		o.version = s
-		return nil
-	}
-}
-
-func Revision(s string) AppOption {
-	return func(o *options) error {
-		o.revision = s
-		return nil
-	}
-}
-
+// OsArguments is the list of arguments passed to the CLI at runtime
 func OsArguments(args []string) AppOption {
 	return func(o *options) error {
 		o.osArgs = args
@@ -30,6 +17,7 @@ func OsArguments(args []string) AppOption {
 	}
 }
 
+// Argument is an argument passed programmatically
 func Argument(kv KeyVal) AppOption {
 	return func(o *options) error {
 		var key string
