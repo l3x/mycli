@@ -40,7 +40,6 @@ func (runtime *App) Run(app *cli.App) (err error) {
 type options struct {
 	osArgs    []string
 	arguments map[string]string
-	testFn    testFunc
 }
 
 func New(appOpts ...AppOption) (*App, error) {

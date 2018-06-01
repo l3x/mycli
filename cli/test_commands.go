@@ -3,22 +3,29 @@ package cli
 import (
 	"errors"
 
+	"os"
+
+	"fmt"
+
 	"github.com/urfave/cli"
 )
 
 func TestCommands(c *cli.Context) (err error) {
 
-	err = testExtraForXXX(c)
+	testName := os.Getenv("TEST_NAME")
+	if testName == "test-extra-arg" {
+		err = testExtraArg(c)
+	}
 
 	return
 }
 
-func testExtraForXXX(c *cli.Context) (err error) {
-	want := "xxx"
-	extra := c.GlobalString("extra")
+func testExtraArg(c *cli.Context) (err error) {
+	want := os.Getenv("TEST_WANT")
+	got := c.GlobalString("extra")
 
-	if extra != want {
-		err = errors.New("expected extra flag to equal " + want)
+	if want != got {
+		err = errors.New(fmt.Sprintf("expected extra flag to equal (%s), but got (%s)", want, got))
 	}
 
 	return

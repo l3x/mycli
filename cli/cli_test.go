@@ -1,13 +1,10 @@
 package cli
 
 import (
-	"flag"
-	"log"
 	"os"
 	"testing"
 
 	"github.com/l3x/mycli/cli/runtime"
-	"github.com/urfave/cli"
 )
 
 const (
@@ -70,37 +67,35 @@ func teardown() {
 func TestConfigFlag(t *testing.T) {
 
 	type testData struct {
-		args map[string]string
-		want string
+		testName string
+		args     map[string]string
+		want     string
 	}
 
 	data := []testData{
-		{map[string]string{
-			"--config": "/tmp/xxx",
-			"--extra":  "XXX",
-		}, "XXX"},
+		{
+			"test-extra-arg",
+			map[string]string{
+				"--config": "/tmp/xxx",
+				"--extra":  "XXX",
+			},
+			"XXX",
+		},
+		{
+			"test-extra-arg",
+			map[string]string{
+				"--extra": "zzz",
+			},
+			"zzz",
+		},
 	}
 
 	for _, test := range data {
-		newArgs := runtime.Argument(test.args)
 
-		runtime.TestFunc(func(c *cli.Context) bool { return c.GlobalString("extra") == "XXX" })
+		os.Setenv("TEST_NAME", test.testName)
+		os.Setenv("TEST_WANT", test.want)
+		RunCLI(osArgs, Version, Revision, runtime.Argument(test.args))
 
-		cliErr := RunCLI(osArgs, Version, Revision, newArgs)
-		if cliErr != nil {
-			log.Println("CLI error encountered:")
-			log.Fatal(cliErr)
-		}
-
-		set := flag.NewFlagSet("testExtraForXXX", flag.ContinueOnError)
-		app := cli.NewApp()
-		ctx := cli.NewContext(app, set, nil)
-
-		got := ctx.GlobalString("extra")
-
-		if test.want != got {
-			t.Errorf("%s %s => \nWANT\n%s\nGOT\n%v", test.want, got)
-		}
 	}
 
 }
