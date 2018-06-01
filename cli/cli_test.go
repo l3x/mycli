@@ -32,23 +32,6 @@ func TestMain(m *testing.M) {
 }
 
 func setup() {
-	////TODO: Remove after testing on circleci
-	//cmd := exec.Command("sh", "-c", "find ../../.. -name \"keep-*\"")
-	//stdoutStderr, err := cmd.CombinedOutput()
-	//if err != nil {
-	//	fmt.Printf("Error running command: %v\n", err)
-	//} else {
-	//	fmt.Printf("%s\n", stdoutStderr)
-	//}
-
-	//cliBinaryName = os.Getenv("CLI_BINARY")
-	//if len(cliBinaryName) == 0 {
-	//	cliBinaryName = defaultCLIBinaryName
-	//}
-	//if !FileExists(cliBinaryName) {
-	//	fmt.Printf("CLI binary file not found: %s\n", cliBinaryName)
-	//	os.Exit(1)
-	//}
 
 	verboseLogging = defaultVerboseLogging
 	if os.Getenv("CLI_VERBOSE_LOGGING") == "true" {

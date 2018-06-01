@@ -55,9 +55,6 @@ const (
 // ValidateConfig validates the contents of the config file
 func ValidateConfig(c *cli.Context) (err error) {
 
-	extra := c.GlobalString("extra")
-	fmt.Printf("extra: %s\n", extra)
-
 	configPath := c.GlobalString("config")
 	configPath, err = GetConfigFilePath(configPath)
 	if err != nil {

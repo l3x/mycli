@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/l3x/mycli/cli"
-	"github.com/l3x/mycli/cli/runtime"
 )
 
 var (
@@ -24,13 +23,7 @@ func init() {
 
 func main() {
 
-	kv := map[string]string{
-		"--config": "/tmp/xxx",
-		"--extra":  "XXX",
-	}
-	newArgs := runtime.Argument(kv)
-
-	cliErr := cli.RunCLI(os.Args, Version, Revision, newArgs)
+	cliErr := cli.RunCLI(os.Args, Version, Revision)
 	if cliErr != nil {
 		log.Println("CLI error encountered:")
 		log.Fatal(cliErr)
